@@ -6,6 +6,7 @@
 import httplib
 import base64
 import sys
+import time
 
 class proxy_checker:
     def __init__(self,proxy,port):
@@ -15,10 +16,15 @@ class proxy_checker:
 
     def connection(self):
         try:
-            self.conn=httplib.HTTPConnection(proxy,port)#A HTTP SERVER CONNECTION CLOSES AFTER A SINGLE REQUEST
+            self.conn=httplib.HTTPConnection(proxy,port,timeout=20)#A HTTP SERVER CONNECTION CLOSES AFTER A SINGLE REQUEST
+            self.start=time.time()
             self.conn.request("GET","http://www.google.com")
         except:
-             print "--------INVALID SERVER ADDRESS---------"
+             self.end=time.time()
+             if self.end-self.start>=15:
+                 print " -----------time out error--------Server not responding,please try again-------------------"
+             else:
+                print "--------INVALID PROXY SERVER ADDRESS---------"
              sys.exit()
 
     def response_checker(self):
